@@ -29,7 +29,6 @@ import com.zj.hometest.lifeasandroidenginner.di.DaggerLifeAsAndroidEngineerContr
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.schedulers.Schedulers
 
 class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerViewModel, LifeAsAndroidEngineerBinding, Nothing>,
     LifeAsAndroidEngineerNavigator {
