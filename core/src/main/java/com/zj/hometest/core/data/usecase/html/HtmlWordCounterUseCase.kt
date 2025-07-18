@@ -9,6 +9,8 @@ class HtmlWordCounterUseCase(
     private val computationThreadScheduler: Scheduler
 ) : HtmlUseCaseObservable<String, Map<String, Int>> {
 
+    private val MIN_NUMBER_OF_PROCESSORS = 1
+
     override fun execute(input: String): Observable<Map<String, Int>> {
 
         if (input.isBlank()) return Observable.just(emptyMap())
@@ -26,7 +28,7 @@ class HtmlWordCounterUseCase(
 
         val effectiveProcessors = (availableProcessors * coreUtilization)
             .toInt()
-            .coerceIn(1, maxChunkCount)
+            .coerceIn(MIN_NUMBER_OF_PROCESSORS, maxChunkCount)
 
         val chunks = getChunks(words, effectiveProcessors)
         LOG.d("HtmlWordCounterUseCase Words: ${words.size}, Chunks: ${chunks.size}")
@@ -78,7 +80,7 @@ class HtmlWordCounterUseCase(
                 words.chunked(len / 3)
             }
             else -> {
-                val chunkSize = maxOf(1, len / effectiveProcessors)
+                val chunkSize = maxOf(MIN_NUMBER_OF_PROCESSORS, len / effectiveProcessors)
                 LOG.d("HtmlWordCounterUseCase getChunks using $effectiveProcessors cores, chunk size: $chunkSize")
                 words.chunked(chunkSize)
             }
