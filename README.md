@@ -61,6 +61,7 @@ To run **all unit tests at once**, use the following command:
 
 ```bash
 ./gradlew test
+```
 
 ## 📊 Benchmark: `HtmlWordCounterUseCase`
 
@@ -93,3 +94,4 @@ return when {
     len < 15_000 -> words.chunked(len / 3)
     else -> words.chunked(len / effectiveProcessors)
 }
+```
