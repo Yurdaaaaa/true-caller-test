@@ -81,9 +81,9 @@ class LifeAsAndroidEngineerViewModel(
     private fun getWordCounts(html: String) {
         disposables += wordCounterUseCase.execute(html)
             .observeOn(mainThreadScheduler)
-            .subscribe({ countsMap ->
-                LOG.d("Word counts: ${countsMap.entries.joinToString { "${it.key}=${it.value}" }}")
-                uiEventRelay.accept { it.copy(event = UiState.Data.ShowWordCount(countsMap)) }
+            .subscribe({ wordCountMap ->
+                LOG.d("Word counts: ${wordCountMap.entries.joinToString { "${it.key}=${it.value}" }}")
+                uiEventRelay.accept { it.copy(event = UiState.Data.ShowWordCount(wordCountMap)) }
             }, { error ->
                 LOG.e("Error in wordCountUseCase: $error")
                 uiEventRelay.accept { it.copy(event = UiState.Error.ErrorWordCount) }
