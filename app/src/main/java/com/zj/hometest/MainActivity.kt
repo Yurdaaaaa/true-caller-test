@@ -22,8 +22,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val window = window
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
