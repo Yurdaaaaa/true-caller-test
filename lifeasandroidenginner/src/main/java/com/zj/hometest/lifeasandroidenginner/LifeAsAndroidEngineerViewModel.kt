@@ -20,7 +20,8 @@ class LifeAsAndroidEngineerViewModel(
     private val every15CharacterUseCase: HtmlEvery15thCharacterUseCase,
     private val wordCounterUseCase: HtmlWordCounterUseCase,
     private val fetchLifeAsDeveloperHtmlUseCase: HtmlPageFetchLifeAsAndroidEngineerUseCase,
-    private val mainThreadScheduler: Scheduler
+    private val mainThreadScheduler: Scheduler,
+    private val computationThreadScheduler: Scheduler
 ) : ViewModel<Nothing>() {
 
     private val uiEventRelay = BehaviorRelay.createDefault(UiEventState())
@@ -81,6 +82,7 @@ class LifeAsAndroidEngineerViewModel(
     private fun getWordCounts(html: String) {
         println("input size: ${html.length}")
         disposables += wordCounterUseCase.execute(html)
+            .subscribeOn(computationThreadScheduler) // tokenization, reduce, map wont run on UI thread but on computation thread
             .observeOn(mainThreadScheduler)
             .subscribe({ wordCountMap ->
                 LOG.d("Word counts: ${wordCountMap.entries.joinToString { "${it.key}=${it.value}" }}")

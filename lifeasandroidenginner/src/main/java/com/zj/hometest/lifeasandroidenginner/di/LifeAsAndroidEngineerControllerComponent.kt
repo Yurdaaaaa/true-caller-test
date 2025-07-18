@@ -5,6 +5,7 @@ import com.zj.hometest.core.data.usecase.html.HtmlEvery15thCharacterUseCase
 import com.zj.hometest.core.data.usecase.html.HtmlPageFetchLifeAsAndroidEngineerUseCase
 import com.zj.hometest.core.data.usecase.html.HtmlWordCounterUseCase
 import com.zj.hometest.core.di.AppComponent
+import com.zj.hometest.core.di.ComputationScheduler
 import com.zj.hometest.lifeasandroidenginner.LifeAsAndroidEngineerController
 import com.zj.hometest.lifeasandroidenginner.LifeAsAndroidEngineerViewModel
 import dagger.BindsInstance
@@ -39,14 +40,16 @@ object LifeAsAndroidEngineerComponentModule {
         fifteenthCharacterUseCase: Html15thCharacterUseCase,
         every15CharacterUseCase: HtmlEvery15thCharacterUseCase,
         wordCounterUseCase: HtmlWordCounterUseCase,
-        htmlPageFetchLifeAsAndroidEngineerUseCase: HtmlPageFetchLifeAsAndroidEngineerUseCase
+        htmlPageFetchLifeAsAndroidEngineerUseCase: HtmlPageFetchLifeAsAndroidEngineerUseCase,
+        @ComputationScheduler computationScheduler: Scheduler
     ) = LifeAsAndroidEngineerViewModel(
         controller,
         fifteenthCharacterUseCase,
         every15CharacterUseCase,
         wordCounterUseCase,
         htmlPageFetchLifeAsAndroidEngineerUseCase,
-        mainThreadScheduler
+        mainThreadScheduler,
+        computationScheduler
     )
 }
 

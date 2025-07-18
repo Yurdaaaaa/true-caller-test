@@ -114,7 +114,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
 
         disposables += uiEventObservable
             .filter { it.event is  UiState.Phase }
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(appComponent.ioScheduler)
             .observeOn(appComponent.mainThreadScheduler)
             .throwingSubscribe {
                 LOG.d("uiEvent phase: ${it.event}")
@@ -143,7 +143,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
         disposables += uiEventObservable
             .filter { it.event is UiState.Data }
             .distinctUntilChanged()
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(appComponent.ioScheduler)
             .observeOn(appComponent.mainThreadScheduler)
             .throwingSubscribe {
                 LOG.d("uiEvent data: ${it.event}")
@@ -170,7 +170,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
 
         disposables += uiEventObservable
             .filter { it.event is UiState.Error }
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(appComponent.ioScheduler)
             .observeOn(appComponent.mainThreadScheduler)
             .throwingSubscribe {
                 LOG.e("uiEvent errors: ${it.event}")
@@ -206,7 +206,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
             .flatMap { list ->
                 Observable.fromCallable {
                     Every15thCharacterListItemMapper.mapItems(list, showError)
-                }.subscribeOn(Schedulers.computation())
+                }.subscribeOn(appComponent.computationScheduler)
             }
             .observeOn(appComponent.mainThreadScheduler)
             .throwingSubscribe { items ->
@@ -230,7 +230,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
         .flatMap { list ->
             Observable.fromCallable {
                 WordCounterListItemMapper.mapItems(wordMap, showError)
-            }.subscribeOn(Schedulers.computation())
+            }.subscribeOn(appComponent.computationScheduler)
         }
         .observeOn(appComponent.mainThreadScheduler)
         .throwingSubscribe { items ->
