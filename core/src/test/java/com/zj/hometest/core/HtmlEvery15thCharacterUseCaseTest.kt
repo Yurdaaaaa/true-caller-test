@@ -19,7 +19,7 @@ class HtmlEvery15thCharacterUseCaseTest {
     @Test
     fun every15thCharacterLongTextUseCaseTest() {
         val input = "<p>truecaller</p><b>TRUECALLER</b>"
-        val expected = arrayListOf('/', 'R') // index 14 = 'O', index 29 = '5'
+        val expected = arrayListOf('/', 'R') // index 14 = '/', index 29 = 'R'
 
         val testObserver = useCase.execute(input).test()
         testScheduler.triggerActions()
