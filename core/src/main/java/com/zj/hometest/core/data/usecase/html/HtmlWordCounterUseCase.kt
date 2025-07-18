@@ -37,7 +37,7 @@ class HtmlWordCounterUseCase(
             .reduce { acc, chunkMap -> // first chunkMap is taken as initial map in accumulation, then we are merging the rest
                 for ((k, count) in chunkMap) {
                     if (acc.containsKey(k)) {
-                        acc[k] = acc[k]!! + count
+                        acc[k] = acc[k]!! + count // count whats already in map + chunk count
                     } else {
                         acc[k] = count
                     }
