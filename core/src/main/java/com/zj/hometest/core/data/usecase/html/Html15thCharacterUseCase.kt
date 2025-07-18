@@ -9,8 +9,11 @@ class Html15thCharacterUseCase(
 ) : HtmlUseCaseSingle<String, Char> {
 
     override fun execute(input: String): Single<Char> {
-        return Single.fromCallable {
-            input.getOrNull(14) ?: '❌'
+        return Single.defer {
+            input.getOrNull(14)?.let { char ->
+                Single.just(char)
+            } ?: Single.error(IndexOutOfBoundsException("Input string is too short."))
         }.subscribeOn(computationThreadScheduler)
     }
+
 }

@@ -29,14 +29,14 @@ class Html15thCharacterUseCaseTest {
     }
 
     @Test
-    fun `execute should return ❌ if input is shorter than 15 characters`() {
-        val input = "not long text"
-        val expectedChar = '❌'
+    fun `execute should return an exception if input is shorter than 15 characters`() {
+        val input = "not long text" // shorter than 15 chars
 
         val testObserver = useCase.execute(input).test()
         testScheduler.triggerActions()
 
-        testObserver.assertNoErrors()
-        testObserver.assertValue(expectedChar)
+        testObserver.assertError(IndexOutOfBoundsException::class.java)
+        testObserver.assertNotComplete()
+        testObserver.assertNoValues()
     }
 }
