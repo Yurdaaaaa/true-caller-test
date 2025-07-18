@@ -1,12 +1,12 @@
 package com.zj.hometest.core.data.usecase.html
 
-import com.zj.hometest.core.data.usecase.base.UseCaseSingle
+import com.zj.hometest.core.data.usecase.base.HtmlUseCaseSingle
 import io.reactivex.Scheduler
 import io.reactivex.Single
 
 class HtmlEvery15thCharacterUseCase(
     private val computationThreadScheduler: Scheduler
-) : UseCaseSingle<String, ArrayList<Char>> {
+) : HtmlUseCaseSingle<String, ArrayList<Char>> {
 
     override fun execute(input: String): Single<ArrayList<Char>> {
         return Single.fromCallable {
