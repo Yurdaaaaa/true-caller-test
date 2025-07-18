@@ -57,7 +57,7 @@ Unit testing is implemented using JUnit and TestScheduler from io.reactivex.sche
 - [`/core/HtmlEvery15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlEvery15thCharacterUseCaseTest.kt)
 - [`/core/HtmlWordCounterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlWordCounterUseCaseTest.kt)
 
-## 📊 Benchmark: `HtmlWordCounterUseCase` Performance (input size: 158,678 characters)
+## 📊 Benchmark: `HtmlWordCounterUseCase`
 
 **Test Scenario:**
 - Input: A single large HTML string with **158,678 characters**
