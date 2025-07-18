@@ -13,13 +13,15 @@ class HtmlWordCounterUseCase(
 
         if (input.isBlank()) return Observable.just(emptyMap())
 
-        val words = input.splitToSequence(' ', '\n', '\r', '\t') // this should be faster than regex
+        val startTime = System.nanoTime()
+
+        val words = input.splitToSequence(' ', '\n', '\r', '\t') // faster than regex
             .filter { it.isNotBlank() }
             .map { it.lowercase() }
             .toList()
 
         val availableProcessors = Runtime.getRuntime().availableProcessors()
-        val coreUtilization = 0.70 // 70% -> dont be too greedy
+        val coreUtilization = 0.70 // 70% -> don't be too greedy
         val maxChunkCount = 4
 
         val effectiveProcessors = (availableProcessors * coreUtilization)
@@ -27,46 +29,56 @@ class HtmlWordCounterUseCase(
             .coerceIn(1, maxChunkCount)
 
         val chunks = getChunks(words, effectiveProcessors)
+        LOG.d("HtmlWordCounterUseCase Words: ${words.size}, Chunks: ${chunks.size}")
 
         return Observable.fromIterable(chunks)
             .flatMap(
                 { chunk ->
                     Observable.fromCallable {
-                        val map = mutableMapOf<String, Int>()
+                        val localWordCount = mutableMapOf<String, Int>()
                         for (word in chunk) {
-                            map[word] = map.getOrDefault(word, 0) + 1
+                            localWordCount[word] = localWordCount.getOrDefault(word, 0) + 1
                         }
-                        map
+                        localWordCount
                     }.subscribeOn(computationThreadScheduler)
                 },
-                effectiveProcessors // second param maxConcurrency
+                effectiveProcessors // maxConcurrency
             )
-            .reduce { accMap, chunkMap -> // first chunkMap is taken as initial map in accumulation, then we are merging the rest
+            .reduce { accMap, chunkMap ->
                 for ((word, count) in chunkMap) {
-                    accMap[word] = accMap.getOrDefault(word, 0) + count // is word present it adds count otherwise default 0 + count
+                    accMap[word] = accMap.getOrDefault(word, 0) + count
                 }
                 accMap
             }
             .toObservable()
             .map { wordCountMap ->
-                wordCountMap.entries
+                val sorted = wordCountMap.entries
                     .sortedByDescending { it.value }
-                    .associateTo(LinkedHashMap()) { it.toPair() }  // linkedHashMap preserves order
+                    .associateTo(LinkedHashMap()) { it.toPair() }
+
+                val endTime = System.nanoTime()
+                val durationMillis = (endTime - startTime) / 1_000_000
+                LOG.d("HtmlWordCounterUseCase took $durationMillis ms")
+
+                sorted
             }
     }
 
     private fun getChunks(words: List<String>, effectiveProcessors: Int): List<List<String>> {
         val len = words.size
         return when {
-            len < 3_000 -> listOf(words) // would otherwise end up as too much people in the kitchen
+            len < 4_000 -> listOf(words)
             len < 10_000 -> {
-                LOG.d("getChunks chunk size: 2")
-                words.chunked(len / 2) // max 2 chunks
+                LOG.d("HtmlWordCounterUseCase getChunks chunk size: 2")
+                words.chunked(len / 2)
+            }
+            len < 15_000 -> {
+                LOG.d("HtmlWordCounterUseCase getChunks chunk size: 3")
+                words.chunked(len / 3)
             }
             else -> {
                 val chunkSize = maxOf(1, len / effectiveProcessors)
-                LOG.d("getChunks using $effectiveProcessors cores, chunk size: $chunkSize")
-
+                LOG.d("HtmlWordCounterUseCase getChunks using $effectiveProcessors cores, chunk size: $chunkSize")
                 words.chunked(chunkSize)
             }
         }
