@@ -46,6 +46,7 @@ class HtmlWordCounterUseCase(
                 },
                 effectiveProcessors // maxConcurrency
             )
+            .observeOn(computationThreadScheduler)
             .reduce { accMap, chunkMap ->
                 for ((word, count) in chunkMap) {
                     accMap[word] = accMap.getOrDefault(word, 0) + count
