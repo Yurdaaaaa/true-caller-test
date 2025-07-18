@@ -1,14 +1,21 @@
 package com.zj.hometest.core
 
 import com.zj.hometest.core.data.usecase.html.HtmlWordCounterUseCase
+import com.zj.hometest.core.util.DisableLOGRule
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Before
+import org.junit.ClassRule
 import org.junit.Test
 
 class HtmlWordCounterUseCaseTest {
 
     private lateinit var useCase: HtmlWordCounterUseCase
     private lateinit var testScheduler: TestScheduler
+
+    companion object {
+        @ClassRule
+        @JvmField val disableLOGRule = DisableLOGRule()
+    }
 
     @Before
     fun setUp() {
