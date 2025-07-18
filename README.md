@@ -57,6 +57,11 @@ Unit testing is implemented using JUnit and TestScheduler from io.reactivex.sche
 - [`/core/HtmlEvery15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlEvery15thCharacterUseCaseTest.kt)
 - [`/core/HtmlWordCounterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlWordCounterUseCaseTest.kt)
 
+To run **all unit tests at once**, use the following command:
+
+```bash
+./gradlew test
+
 ## 📊 Benchmark: `HtmlWordCounterUseCase`
 
 **Test Scenario:**
