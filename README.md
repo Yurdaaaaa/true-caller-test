@@ -53,6 +53,6 @@ These modules promote testability, clarity, and modularity across the applicatio
 
 Unit testing is implemented using JUnit and TestScheduler from io.reactivex.schedulers. The core business logic is thoroughly tested through the following unit test classes:
 
-[`core/src/test/java/com/zj/hometest/core/Html15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/Html15thCharacterUseCaseTest.kt)
-[`core/src/test/java/com/zj/hometest/core/HtmlEvery15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlEvery15thCharacterUseCaseTest.kt)
-[`core/src/test/java/com/zj/hometest/core/HtmlWordCounterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlWordCounterUseCaseTest.kt)
+[`/core/Html15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/Html15thCharacterUseCaseTest.kt)
+[`/core/HtmlEvery15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlEvery15thCharacterUseCaseTest.kt)
+[`/core/HtmlWordCounterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlWordCounterUseCaseTest.kt)
