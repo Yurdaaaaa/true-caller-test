@@ -32,7 +32,7 @@ class HtmlWordCounterUseCase(
                         map
                     }.subscribeOn(computationThreadScheduler)
                 },
-                Runtime.getRuntime().availableProcessors()
+                Runtime.getRuntime().availableProcessors() // second maxConcurrency param
             )
             .reduce { acc, chunkMap -> // first chunkMap is taken as initial map in accumulation, then we are merging the rest
                 for ((k, count) in chunkMap) {
