@@ -79,6 +79,7 @@ class LifeAsAndroidEngineerViewModel(
     }
 
     private fun getWordCounts(html: String) {
+        println("input size: ${html.length}")
         disposables += wordCounterUseCase.execute(html)
             .observeOn(mainThreadScheduler)
             .subscribe({ wordCountMap ->
