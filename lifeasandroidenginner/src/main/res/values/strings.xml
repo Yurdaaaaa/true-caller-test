@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_life_as_android_engineer">TrueCaller HomeTest zj</string>
+    <string name="load_data">Load data</string>
+    <string name="retry">Error Retry</string>
+    <string name="error_retry_message">Something went wrong.\nPlease check your internet connection and try again.</string>
+    <string name="set_initial_state">set initial state</string>
+    <string name="fifteenth_character_label">15th character:</string>
+    <string name="every_fifteenth_character_label">Every 15th character:</string>
+    <string name="word_count_label">Word count stats:</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="smile_sad">:(</string>
+    <string name="position_text_semicolon">%d: </string>
+    <string name="error_item_every_15_th_char_something_went_wrong">error, something went wrong</string>
+    <string name="error_item_15_th_char">error :(</string>
+</resources>

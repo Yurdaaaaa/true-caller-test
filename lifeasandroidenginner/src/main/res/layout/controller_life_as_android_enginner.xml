@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <com.zj.hometest.core.view.TintToolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar" />
+
+    <LinearLayout
+        android:id="@+id/phaseLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/loadDataButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/blue"
+            android:textColor="@color/white"
+            android:padding="@dimen/button_inside_padding"
+            android:textSize="@dimen/button_text_size"
+            android:text="@string/load_data">
+        </Button>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:visibility="gone">
+        </ProgressBar>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/errorHtmlFetchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/error_retry_message"
+            android:layout_marginBottom="@dimen/error_padding_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/black">
+        </TextView>
+
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry"
+            android:textColor="@color/white"
+            android:padding="@dimen/button_inside_padding"
+            android:textSize="@dimen/button_text_size"
+            android:fontFamily="sans-serif-medium"
+            android:backgroundTint="@color/red">
+        </Button>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dataLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/content_top_padding"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/fifteenthCharacterLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/fifteenth_character_label"
+                android:layout_marginEnd="@dimen/end_padding_label"
+                android:textColor="@color/black">
+            </TextView>
+
+            <TextView
+                android:id="@+id/fifteenthCharacterTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                tools:text="*"
+                android:textColor="@color/black">
+            </TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:layout_marginTop="@dimen/content_top_padding"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/list_data_padding"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/everyFifteenthCharacterLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="@string/every_fifteenth_character_label"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/black">
+                    </TextView>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewEvery15thCharacter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/content_top_padding">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/list_data_padding"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/wordCountLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="@string/word_count_label"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/black">
+                    </TextView>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewWordCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/content_top_padding">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
