@@ -64,6 +64,7 @@ class HtmlWordCounterUseCase(
             }
     }
 
+    // this solves too much people in the kitchen
     private fun getChunks(words: List<String>, effectiveProcessors: Int): List<List<String>> {
         val len = words.size
         return when {
