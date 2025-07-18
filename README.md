@@ -56,3 +56,35 @@ Unit testing is implemented using JUnit and TestScheduler from io.reactivex.sche
 - [`/core/Html15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/Html15thCharacterUseCaseTest.kt)
 - [`/core/HtmlEvery15thCharacterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlEvery15thCharacterUseCaseTest.kt)
 - [`/core/HtmlWordCounterUseCaseTest`](core/src/test/java/com/zj/hometest/core/HtmlWordCounterUseCaseTest.kt)
+
+### 📊 Benchmark: `HtmlWordCounterUseCase` Performance (input size: 158,678 characters)
+
+**Test Scenario:**
+- Input: A single large HTML string with **158,678 characters**
+- Tokenization resulted in: **9,798 words**
+- Phone: [old pal Xiaomi Redmi PRO 9]
+- Measurement method: `System.nanoTime()` around `execute(...)`
+
+**Chunking Strategies Tested:**
+
+| Chunk Count | Strategy                   | Observed Time (ms) |
+|-------------|----------------------------|--------------------|
+| 1 Chunk     | No splitting               | ~1000 ms (slowest) |
+| 2 Chunks    | Split in half (len / 2)    | ✅ **~350 ms** (best) |
+| 3 Chunks    | Split in thirds (len / 3)  | ~750 ms            |
+
+**Conclusion:**
+- The best performance was achieved with **2 chunks**, balancing parallelism and thread overhead.
+- **1 chunk** suffers from single-threaded bottleneck.
+- **3 chunks** introduce more coordination overhead without better speed.
+- This validates the heuristic:  
+  → `len < 10_000 → words.chunked(len / 2)`
+
+**Implemented Strategy Justification:**
+```kotlin
+return when {
+    len < 4_000 -> listOf(words)
+    len < 10_000 -> words.chunked(len / 2)
+    len < 15_000 -> words.chunked(len / 3)
+    else -> words.chunked(len / effectiveProcessors)
+}
