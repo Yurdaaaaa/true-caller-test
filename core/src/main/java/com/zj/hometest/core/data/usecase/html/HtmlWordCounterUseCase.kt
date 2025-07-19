@@ -9,7 +9,8 @@ class HtmlWordCounterUseCase(
     private val computationThreadScheduler: Scheduler
 ) : HtmlUseCaseObservable<String, Map<String, Int>> {
 
-    private val MIN_NUMBER_OF_PROCESSORS = 1
+    private val MIN_NUMBER_OF_CORES = 1
+    private val MAX_NUMBER_OF_CORES = 4
 
     override fun execute(input: String): Observable<Map<String, Int>> {
 
@@ -19,10 +20,9 @@ class HtmlWordCounterUseCase(
 
         val availableProcessors = Runtime.getRuntime().availableProcessors()
         val coreUtilization = 0.70 // 70% -> don't be too greedy
-        val maxChunkCount = 4
-        val effectiveProcessors = (availableProcessors * coreUtilization)
+        val effectiveCores = (availableProcessors * coreUtilization)
             .toInt()
-            .coerceIn(MIN_NUMBER_OF_PROCESSORS, maxChunkCount)
+            .coerceIn(MIN_NUMBER_OF_CORES, MAX_NUMBER_OF_CORES)
 
         return Observable.fromCallable {
             val words = input.splitToSequence(' ', '\n', '\r', '\t')
@@ -30,7 +30,7 @@ class HtmlWordCounterUseCase(
                 .map { it.lowercase() }
                 .toList()
 
-            val chunks = getChunks(words, effectiveProcessors)
+            val chunks = getChunks(words, effectiveCores)
             LOG.d("HtmlWordCounterUseCase Words: ${words.size}, Chunks: ${chunks.size}")
 
             chunks
@@ -48,7 +48,7 @@ class HtmlWordCounterUseCase(
                     chunkMap
                 }.subscribeOn(computationThreadScheduler)
             },
-            effectiveProcessors // maxConcurrency
+            effectiveCores // maxConcurrency
         )
         .reduce { accMap, chunkMap ->
             for ((word, count) in chunkMap) {
@@ -71,7 +71,7 @@ class HtmlWordCounterUseCase(
     }
 
     // this solves too much people in the kitchen
-    private fun getChunks(words: List<String>, effectiveProcessors: Int): List<List<String>> {
+    private fun getChunks(words: List<String>, effectiveCores: Int): List<List<String>> {
         val len = words.size
         return when {
             len < 4_000 -> listOf(words)
@@ -84,8 +84,8 @@ class HtmlWordCounterUseCase(
                 words.chunked(len / 3)
             }
             else -> {
-                val chunkSize = maxOf(MIN_NUMBER_OF_PROCESSORS, len / effectiveProcessors)
-                LOG.d("HtmlWordCounterUseCase getChunks using $effectiveProcessors cores, chunk size: $chunkSize")
+                val chunkSize = maxOf(MIN_NUMBER_OF_CORES, len / effectiveCores)
+                LOG.d("HtmlWordCounterUseCase getChunks using $effectiveCores cores, chunk size: $chunkSize")
                 words.chunked(chunkSize)
             }
         }
