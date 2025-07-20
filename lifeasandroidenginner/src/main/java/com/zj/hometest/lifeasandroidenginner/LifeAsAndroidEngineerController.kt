@@ -30,7 +30,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 
-class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerViewModel, LifeAsAndroidEngineerBinding, Nothing>,
+class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerViewModel, LifeAsAndroidEngineerBinding, LifeAsAndroidEngineerSaveState>,
     LifeAsAndroidEngineerNavigator {
 
     constructor() : this(bundleOf {
@@ -48,13 +48,14 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
 
     override fun onCreateViewModel(
         appComponent: AppComponent,
-        savedState: Nothing?
+        savedState: LifeAsAndroidEngineerSaveState?
     ): LifeAsAndroidEngineerViewModel {
 
         return DaggerLifeAsAndroidEngineerControllerComponent.factory()
             .create(
                 appComponent = appComponent,
-                controller = this
+                controller = this,
+                savedState = savedState
             )
             .lifeAsAndroidEngineerViewModel
     }
@@ -191,6 +192,29 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
                     }
                     else -> {
                         LOG.e("uiEvent errors: wrong event: ${it.event}")
+                    }
+                }
+            }
+
+        disposables += uiEventObservable
+            .filter { it.event is UiState.SaveState }
+            .subscribeOn(appComponent.ioScheduler)
+            .observeOn(appComponent.mainThreadScheduler)
+            .throwingSubscribe {
+                LOG.d("uiEvent SaveState: ${it.event}")
+
+                viewBinding.phaseLayout.visibility = View.GONE
+                viewBinding.errorHtmlFetchLayout.visibility = View.GONE
+                viewBinding.dataLayout.visibility = View.VISIBLE
+
+                when(val event = it.event) {
+                    is UiState.SaveState.Data -> {
+                        event.wordCount?.let(viewModel::showWordCount)
+                        event.fifteenthChar?.let(viewModel::showFifteenthCharacter)
+                        event.every15thChars?.let(viewModel::showEvery15thCharacterData)
+                    }
+                    else -> {
+                        LOG.e("uiEvent SaveState: wrong event: ${it.event}")
                     }
                 }
             }

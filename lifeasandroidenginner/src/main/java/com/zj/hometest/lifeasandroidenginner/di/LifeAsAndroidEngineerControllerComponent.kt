@@ -7,6 +7,7 @@ import com.zj.hometest.core.data.usecase.html.HtmlWordCounterUseCase
 import com.zj.hometest.core.di.AppComponent
 import com.zj.hometest.core.di.ComputationScheduler
 import com.zj.hometest.lifeasandroidenginner.LifeAsAndroidEngineerController
+import com.zj.hometest.lifeasandroidenginner.LifeAsAndroidEngineerSaveState
 import com.zj.hometest.lifeasandroidenginner.LifeAsAndroidEngineerViewModel
 import dagger.BindsInstance
 import dagger.Component
@@ -25,6 +26,7 @@ internal interface LifeAsAndroidEngineerControllerComponent {
         fun create(
             appComponent: AppComponent,
             @BindsInstance controller: LifeAsAndroidEngineerController,
+            @BindsInstance savedState: LifeAsAndroidEngineerSaveState?
         ): LifeAsAndroidEngineerControllerComponent
     }
 }
@@ -35,6 +37,7 @@ object LifeAsAndroidEngineerComponentModule {
     @JvmStatic
     @Provides
     fun viewModel(
+        savedState: LifeAsAndroidEngineerSaveState?,
         controller: LifeAsAndroidEngineerController,
         mainThreadScheduler: Scheduler,
         fifteenthCharacterUseCase: Html15thCharacterUseCase,
@@ -43,6 +46,7 @@ object LifeAsAndroidEngineerComponentModule {
         htmlPageFetchLifeAsAndroidEngineerUseCase: HtmlPageFetchLifeAsAndroidEngineerUseCase,
         @ComputationScheduler computationScheduler: Scheduler
     ) = LifeAsAndroidEngineerViewModel(
+        savedState,
         controller,
         fifteenthCharacterUseCase,
         every15CharacterUseCase,

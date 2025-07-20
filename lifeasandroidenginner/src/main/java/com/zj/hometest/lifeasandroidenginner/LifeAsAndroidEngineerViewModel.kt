@@ -6,6 +6,7 @@ import com.zj.hometest.core.data.usecase.html.HtmlEvery15thCharacterUseCase
 import com.zj.hometest.core.data.usecase.html.HtmlPageFetchLifeAsAndroidEngineerUseCase
 import com.zj.hometest.core.data.usecase.html.HtmlWordCounterUseCase
 import com.zj.hometest.core.net.TrueCallerNetworkManager.DownloadHtmlEvent
+import com.zj.hometest.core.ui.SavedState
 import com.zj.hometest.core.ui.ViewModel
 import com.zj.hometest.core.util.LOG
 import com.zj.hometest.core.util.ext.accept
@@ -13,8 +14,10 @@ import com.zj.hometest.core.util.ext.throwingSubscribe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.parcelize.Parcelize
 
 class LifeAsAndroidEngineerViewModel(
+    private val savedState: LifeAsAndroidEngineerSaveState?,
     private val navigator: LifeAsAndroidEngineerNavigator,
     private val fifteenthCharacterUseCase: Html15thCharacterUseCase,
     private val every15CharacterUseCase: HtmlEvery15thCharacterUseCase,
@@ -22,11 +25,19 @@ class LifeAsAndroidEngineerViewModel(
     private val fetchLifeAsDeveloperHtmlUseCase: HtmlPageFetchLifeAsAndroidEngineerUseCase,
     private val mainThreadScheduler: Scheduler,
     private val computationThreadScheduler: Scheduler
-) : ViewModel<Nothing>() {
+) : ViewModel<LifeAsAndroidEngineerSaveState>() {
 
-    private val uiEventRelay = BehaviorRelay.createDefault(UiEventState())
+    private val uiEventRelay = BehaviorRelay.createDefault(
+        if(savedState == null) {
+            UiEventState()
+        } else {
+            UiEventState(savedState.toUiStateSavedState())
+        }
+    )
     val uiEventObservable: Observable<UiEventState>
         get() = uiEventRelay
+
+    private var currentSaveState = savedState ?: LifeAsAndroidEngineerSaveState()
 
     private fun fetchHtmlData() {
         disposables += fetchLifeAsDeveloperHtmlUseCase.execute()
@@ -60,11 +71,16 @@ class LifeAsAndroidEngineerViewModel(
             .observeOn(mainThreadScheduler)
             .subscribe({ char ->
                 LOG.d("15th character: $char")
-                uiEventRelay.accept { it.copy(event = UiState.Data.ShowFifteenthCharacter(char)) }
+                updateSaveState { copy(fifteenthChar = char) }
+                showFifteenthCharacter(char)
             }, { error ->
                 LOG.e("Error in char15UseCase: $error")
                 uiEventRelay.accept { it.copy(event = UiState.Error.ErrorFifteenthCharacter) }
             })
+    }
+
+    fun showFifteenthCharacter(char: Char) {
+        uiEventRelay.accept { it.copy(event = UiState.Data.ShowFifteenthCharacter(char)) }
     }
 
     private fun getEvery15thCharacter(html: String) {
@@ -72,11 +88,16 @@ class LifeAsAndroidEngineerViewModel(
             .observeOn(mainThreadScheduler)
             .subscribe({ listOfChars ->
                 LOG.d("Every 15th character: ${listOfChars.joinToString()}")
-                uiEventRelay.accept { it.copy(event = UiState.Data.ShowEvery15thCharacter(listOfChars)) }
+                updateSaveState { copy(every15thChars = listOfChars) }
+                showEvery15thCharacterData(listOfChars)
             }, { error ->
                 LOG.e("Error in every15thUseCase: $error")
                 uiEventRelay.accept { it.copy(event = UiState.Error.ErrorEvery15thCharacter) }
             })
+    }
+
+    fun showEvery15thCharacterData(listOfChars: ArrayList<Char>) {
+        uiEventRelay.accept { it.copy(event = UiState.Data.ShowEvery15thCharacter(listOfChars)) }
     }
 
     private fun getWordCounts(html: String) {
@@ -86,11 +107,16 @@ class LifeAsAndroidEngineerViewModel(
             .observeOn(mainThreadScheduler)
             .subscribe({ wordCountMap ->
                 LOG.d("Word counts: ${wordCountMap.entries.joinToString { "${it.key}=${it.value}" }}")
-                uiEventRelay.accept { it.copy(event = UiState.Data.ShowWordCount(wordCountMap)) }
+                updateSaveState { copy(wordCountMap = wordCountMap) }
+                showWordCount(wordCountMap)
             }, { error ->
                 LOG.e("Error in wordCountUseCase: $error")
                 uiEventRelay.accept { it.copy(event = UiState.Error.ErrorWordCount) }
             })
+    }
+
+    fun showWordCount(wordCountMap: Map<String, Int>) {
+        uiEventRelay.accept { it.copy(event = UiState.Data.ShowWordCount(wordCountMap)) }
     }
 
     fun loadDataButtonClicked() {
@@ -108,6 +134,12 @@ class LifeAsAndroidEngineerViewModel(
     fun onAnotherScreenClicked() {
         navigator.goToAnotherScreen()
     }
+
+    private fun updateSaveState(block: LifeAsAndroidEngineerSaveState.() -> LifeAsAndroidEngineerSaveState) {
+        currentSaveState = currentSaveState.block()
+    }
+
+    override fun toSavedState(): LifeAsAndroidEngineerSaveState = currentSaveState
 }
 
 data class UiEventState(
@@ -133,5 +165,17 @@ sealed class UiState {
         object ErrorWordCount : Error()
         object ErrorHtmlFetch : Error()
     }
+
+    sealed class SaveState : UiState() {
+        data class Data(val fifteenthChar: Char? = null, val every15thChars: ArrayList<Char>? = null, val wordCount: Map<String, Int>? = null): SaveState()
+    }
 }
 
+@Parcelize
+data class LifeAsAndroidEngineerSaveState(
+    val fifteenthChar: Char? = null,
+    val every15thChars: ArrayList<Char>? = null,
+    val wordCountMap: Map<String, Int>? = null
+) : SavedState {
+    fun toUiStateSavedState(): UiState.SaveState.Data = UiState.SaveState.Data(fifteenthChar, every15thChars, wordCountMap)
+}

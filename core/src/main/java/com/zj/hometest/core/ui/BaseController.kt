@@ -35,8 +35,13 @@ abstract class BaseController<VM : ViewModel<SS>, VB : ViewBinding, SS : SavedSt
     ): View {
         val view = super.onCreateView(inflater, container, savedViewState)
 
+        println("baseController onCreateView")
+
         val activity = activity!!
         if (!::viewModel.isInitialized) {
+
+            println("baseController onCreateView not initialized")
+
             val savedState = savedViewState?.getParcelable<SS>(KEY_SAVED_STATE)
             viewModel = onCreateViewModel(appComponent, savedState)
         }
