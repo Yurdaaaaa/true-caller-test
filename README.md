@@ -21,7 +21,7 @@ An Android application built using the MVI architecture, leveraging a single-act
 - **Target SDK:** 36
 - **Java version:** 17
 - **Kotlin version:** 2.1.21
-- **Ksp` version:** 2.1.21-2.0.2
+- **Ksp version:** 2.1.21-2.0.2
 
 ## 🧠 Threading & Use Case Execution
 
