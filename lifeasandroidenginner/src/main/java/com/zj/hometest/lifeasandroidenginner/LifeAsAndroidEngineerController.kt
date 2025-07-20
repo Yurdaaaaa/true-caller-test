@@ -197,7 +197,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
             }
 
         disposables += uiEventObservable
-            .filter { it.event is UiState.SaveState }
+            .filter { it.event is UiState.SavedState }
             .subscribeOn(appComponent.ioScheduler)
             .observeOn(appComponent.mainThreadScheduler)
             .throwingSubscribe {
@@ -208,7 +208,7 @@ class LifeAsAndroidEngineerController : BaseController<LifeAsAndroidEngineerView
                 viewBinding.dataLayout.visibility = View.VISIBLE
 
                 when(val event = it.event) {
-                    is UiState.SaveState.Data -> {
+                    is UiState.SavedState.Data -> {
                         event.wordCount?.let(viewModel::showWordCount)
                         event.fifteenthChar?.let(viewModel::showFifteenthCharacter)
                         event.every15thChars?.let(viewModel::showEvery15thCharacterData)

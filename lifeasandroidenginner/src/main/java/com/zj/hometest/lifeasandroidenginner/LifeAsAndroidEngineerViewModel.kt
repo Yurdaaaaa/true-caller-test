@@ -166,8 +166,8 @@ sealed class UiState {
         object ErrorHtmlFetch : Error()
     }
 
-    sealed class SaveState : UiState() {
-        data class Data(val fifteenthChar: Char? = null, val every15thChars: ArrayList<Char>? = null, val wordCount: Map<String, Int>? = null): SaveState()
+    sealed class SavedState : UiState() {
+        data class Data(val fifteenthChar: Char? = null, val every15thChars: ArrayList<Char>? = null, val wordCount: Map<String, Int>? = null): SavedState()
     }
 }
 
@@ -177,5 +177,5 @@ data class LifeAsAndroidEngineerSaveState(
     val every15thChars: ArrayList<Char>? = null,
     val wordCountMap: Map<String, Int>? = null
 ) : SavedState {
-    fun toUiStateSavedState(): UiState.SaveState.Data = UiState.SaveState.Data(fifteenthChar, every15thChars, wordCountMap)
+    fun toUiStateSavedState(): UiState.SavedState.Data = UiState.SavedState.Data(fifteenthChar, every15thChars, wordCountMap)
 }
