@@ -11,6 +11,7 @@ class HtmlWordCounterUseCase(
 
     private val MIN_NUMBER_OF_CORES = 1
     private val MAX_NUMBER_OF_CORES = 4
+    private val MAX_CORES_USAGE_PERCENTAGE = 0.70  // 70% -> don't be too greedy
 
     override fun execute(input: String): Observable<Map<String, Int>> {
 
@@ -19,8 +20,8 @@ class HtmlWordCounterUseCase(
         val startTime = System.nanoTime()
 
         val availableProcessors = Runtime.getRuntime().availableProcessors()
-        val coreUtilization = 0.70 // 70% -> don't be too greedy
-        val effectiveCores = (availableProcessors * coreUtilization)
+        val coreUsagePercentage = MAX_CORES_USAGE_PERCENTAGE
+        val effectiveCores = (availableProcessors * coreUsagePercentage)
             .toInt()
             .coerceIn(MIN_NUMBER_OF_CORES, MAX_NUMBER_OF_CORES)
 
